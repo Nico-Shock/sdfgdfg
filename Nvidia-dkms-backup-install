@@ -1,0 +1,41 @@
+## Install NVIDIA Drivers
+
+```
+pacman -S nvidia-dkms libglvnd nvidia-utils opencl-nvidia lib32-libglvnd lib32-nvidia-utils lib32-opencl-nvidia nvidia-settings
+```
+
+```
+pacman -S linux-headers
+```
+
+```
+nano /etc/mkinitcpio.conf
+```
+Add the following to `MODULES=()`: `nvidia nvidia_modeset nvidia_uvm nvidia_drm`
+
+```
+mkdir /etc/pacman.d/hooks
+nano /etc/pacman.d/hooks/nvidia.hook
+```
+Add the following:
+```
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Operation=Remove
+Type=Package
+Target=nvidia
+
+[Action]
+Depends=mkinitcpio
+When=PostTransaction
+Exec=/usr/bin/mkinitcpio -P
+```
+
+## Reboot the System
+
+```
+exit
+umount -R /mnt
+reboot
+```
