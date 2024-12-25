@@ -1,0 +1,31 @@
+lspci -nn | grep -E "NVIDIA"
+
+copy ids
+
+Add to you bootloader: `amd_iommu iommu=pt vfio-pci.ids=youids`
+If you have an Intel CPU then replace "amd" with "intel"
+
+sudo reboot now
+
+sudo touch /etc/modprobe.d/vfio.conf
+
+sudo nano /etc/modprobe.d/vfio.conf
+
+Add:
+
+```
+options vfio-pci ids=youids
+softdep nvidia pre: vfio-pci
+```
+
+sudo mkinitcpio -P youkernel
+
+sudo reboot now
+
+sudo modprobe vfio-pci
+
+lspci -k | grep -E "vfio-pci|NVIDIA"
+
+you shoud see vfio-pci in red
+
+
