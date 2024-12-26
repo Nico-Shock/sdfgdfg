@@ -10,7 +10,10 @@ int main() {
     if (input == "1" || input == "2") {
         std::wstring command = (input == "1") ? L"net user administrator /active:yes" : L"net user administrator /active:no";
         std::wstring psCommand = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; " + command;
-        ShellExecute(NULL, L"runas", L"powershell.exe", (L"-Command \"" + psCommand + L"\"").c_str(), NULL, SW_SHOW);
+        
+        SetEnvironmentVariable(L"__COMPAT_LAYER", L"runasinvoker");
+
+        ShellExecute(NULL, L"open", L"powershell.exe", (L"-Command \"" + psCommand + L"\"").c_str(), NULL, SW_SHOW);
     }
 
     return 0;
