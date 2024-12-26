@@ -7,14 +7,11 @@ int main() {
     std::cout << "1. Activate\n2. Deactivate\n";
     std::getline(std::cin, input);
 
-    if (input == "1") {
-        std::wstring command = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; net user administrator /active:yes";
-        std::wstring cmd = L"powershell.exe -Command \"" + command + L"\"";
-        ShellExecute(NULL, L"runas", cmd.c_str(), NULL, NULL, SW_SHOW);
-    } else if (input == "2") {
-        std::wstring command = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; net user administrator /active:no";
-        std::wstring cmd = L"powershell.exe -Command \"" + command + L"\"";
-        ShellExecute(NULL, L"runas", cmd.c_str(), NULL, NULL, SW_SHOW);
+    if (input == "1" || input == "2") {
+        std::wstring command = (input == "1") ? L"net user administrator /active:yes" : L"net user administrator /active:no";
+        std::wstring psCommand = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; " + command;
+        ShellExecute(NULL, L"runas", L"powershell.exe", (L"-Command \"" + psCommand + L"\"").c_str(), NULL, SW_SHOW);
     }
+
     return 0;
 }
