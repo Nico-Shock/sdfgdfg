@@ -1,0 +1,9 @@
+bcdedit /set hypervisorlaunchtype auto
+wsl --install
+wsl --set-default-version 2
+wsl --install Arch
+sudo pacman -S qemu-full virt-manager bridge-utils libguestfs dnsmasq vde2 openbsd-netcat tigervnc xorg && sudo systemctl enable libvirtd && sudo systemctl start libvirtd && sudo usermod -aG kvm $USER && sudo usermod -aG libvirt $USER && sudo virsh net-start default && sudo virsh net-autostart default
+export DISPLAY=$(hostname -I | awk '{print $1}'):0
+virt-manager
+
+
