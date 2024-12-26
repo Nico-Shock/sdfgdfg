@@ -1,49 +1,18 @@
 #include <windows.h>
 #include <string>
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch (uMsg) {
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            return 0;
-        case WM_COMMAND:
-            if (LOWORD(wParam) == 1) {
-                std::wstring command = L"net user administrator /active:yes";
-                std::wstring psCommand = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; " + command;
-
-                SetEnvironmentVariable(L"__COMPAT_LAYER", L"runasinvoker");
-
-                ShellExecute(NULL, L"open", L"powershell.exe", (L"-Command \"" + psCommand + L"\"").c_str(), NULL, SW_SHOW);
-                MessageBox(hwnd, L"Administrator account activated", L"Success", MB_OK);
-            } else if (LOWORD(wParam) == 2) {
-                std::wstring command = L"net user administrator /active:no";
-                std::wstring psCommand = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; " + command;
-
-                SetEnvironmentVariable(L"__COMPAT_LAYER", L"runasinvoker");
-
-                ShellExecute(NULL, L"open", L"powershell.exe", (L"-Command \"" + psCommand + L"\"").c_str(), NULL, SW_SHOW);
-                MessageBox(hwnd, L"Administrator account deactivated", L"Success", MB_OK);
-            }
-            return 0;
-    }
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
-}
-
 int main() {
-    WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, L"AdminControlApp", NULL };
-    RegisterClassEx(&wc);
-    HWND hwnd = CreateWindow(wc.lpszClassName, L"Activate/Deactivate Admin Account", WS_OVERLAPPEDWINDOW, 100, 100, 300, 150, NULL, NULL, wc.hInstance, NULL);
+    std::wstring commandActivate = L"net user administrator /active:yes";
+    std::wstring commandDeactivate = L"net user administrator /active:no";
 
-    CreateWindow(L"BUTTON", L"Activate", WS_CHILD | WS_VISIBLE, 50, 30, 75, 30, hwnd, (HMENU)1, wc.hInstance, NULL);
-    CreateWindow(L"BUTTON", L"Deactivate", WS_CHILD | WS_VISIBLE, 150, 30, 75, 30, hwnd, (HMENU)2, wc.hInstance, NULL);
+    SetEnvironmentVariable(L"__COMPAT_LAYER", L"runasinvoker");
 
-    ShowWindow(hwnd, SW_SHOWDEFAULT);
-    UpdateWindow(hwnd);
+    int userChoice = MessageBox(NULL, L"Activate admin account? (Yes: 1 / No: 2)", L"Admin Account Activation", MB_YESNO);
 
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+    if (userChoice == IDYES) {
+        system("cmd /c " + std::wstring(commandActivate.c_str()));
+    } else if (userChoice == IDNO) {
+        system("cmd /c " + std::wstring(commandDeactivate.c_str()));
     }
 
     return 0;
