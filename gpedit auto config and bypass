@@ -1,0 +1,22 @@
+import os
+import ctypes
+import winreg as reg
+
+def is_admin():
+    return ctypes.windll.shell32.IsUserAnAdmin() != 0
+
+def enable_prevent_cmd():
+    reg_path = r"SOFTWARE\Policies\Microsoft\Windows\System"
+    try:
+        key = reg.OpenKey(reg.HKEY_LOCAL_MACHINE, reg_path, 0, reg.KEY_WRITE)
+        reg.SetValueEx(key, "DisableCMD", 0, reg.REG_DWORD, 1)
+        reg.CloseKey(key)
+    except Exception as e:
+        print(f"Fehler: {e}")
+
+if __name__ == "__main__":
+    if not is_admin():
+        script = os.path.abspath(__file__)
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", script, None, None, 1)
+    else:
+        enable_prevent_cmd()
