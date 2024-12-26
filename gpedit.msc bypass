@@ -1,3 +1,28 @@
-@echo off
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 0 /f
-pause
+import winreg as reg
+import sys
+
+def disable_uac():
+    try:
+        # Pfad zur Registrierung, wo EnableLUA gespeichert ist
+        reg_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+        
+        # Öffne den Registrierungspfad
+        key = reg.OpenKey(reg.HKEY_LOCAL_MACHINE, reg_path, 0, reg.KEY_WRITE)
+        
+        # Setze den Wert von EnableLUA auf 0 (Deaktiviert UAC)
+        reg.SetValueEx(key, "EnableLUA", 0, reg.REG_DWORD, 0)
+        
+        # Schließe den Registrierungsschlüssel
+        reg.CloseKey(key)
+        
+        print("UAC wurde erfolgreich deaktiviert. Bitte starten Sie den Computer neu.")
+    
+    except PermissionError:
+        print("Fehler: Sie benötigen Administratorrechte, um die Registrierung zu bearbeiten.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Fehler: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    disable_uac()
