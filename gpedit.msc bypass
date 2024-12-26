@@ -19,7 +19,6 @@ def disable_uac():
 
 if __name__ == "__main__":
     if not is_admin():
-        print("Administratorrechte werden benötigt. Skript wird erneut mit Administratorrechten gestartet...")
         script = os.path.abspath(__file__)
         ctypes.windll.shell32.ShellExecuteW(None, "runas", script, None, None, 1)
     else:
