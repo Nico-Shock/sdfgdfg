@@ -8,13 +8,13 @@ int main() {
     std::getline(std::cin, input);
 
     if (input == "1") {
-        std::wstring command = L"net user administrator /active:yes";
-        std::wstring cmd = L"cmd.exe /c " + command;
-        ShellExecute(NULL, L"runas", L"cmd.exe", L"/c " + cmd.c_str(), NULL, SW_SHOW);
+        std::wstring command = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; net user administrator /active:yes";
+        std::wstring cmd = L"powershell.exe -Command \"" + command + L"\"";
+        ShellExecute(NULL, L"runas", cmd.c_str(), NULL, NULL, SW_SHOW);
     } else if (input == "2") {
-        std::wstring command = L"net user administrator /active:no";
-        std::wstring cmd = L"cmd.exe /c " + command;
-        ShellExecute(NULL, L"runas", L"cmd.exe", L"/c " + cmd.c_str(), NULL, SW_SHOW);
+        std::wstring command = L"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; net user administrator /active:no";
+        std::wstring cmd = L"powershell.exe -Command \"" + command + L"\"";
+        ShellExecute(NULL, L"runas", cmd.c_str(), NULL, NULL, SW_SHOW);
     }
     return 0;
 }
